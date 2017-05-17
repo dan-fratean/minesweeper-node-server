@@ -1,0 +1,99 @@
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<style>
+			.cell {
+			    height: 20;
+			    width: 20;
+			    text-align: center;
+			    font-family: Arial;
+			    font-size: 8pt;
+			}
+
+			.not-visited {
+			    background-color: tan;
+			}
+
+			.visited {
+			    background-color: linen;
+			}
+
+			.info {
+				font-family: Arial;
+			    font-size: 8pt;
+			}
+		</style>
+	</head>
+	<body>
+		<div class='mine-field'></div>
+		<div class='info'>
+			Cells left: <span class='info-visited'>400</span>
+		</div>
+	</body>
+</html>
+<script>
+	$(function() {
+		var boardId = -1
+		var done = false
+
+		$.post('//localhost:7778/new', function(data) {
+			boardId = data.boardId
+			console.log('New board: ' + boardId)
+		})
+
+		var table = '<table>'
+		for (var i = 0; i < 20; i++) {
+			table += '<tr>'
+			for (var j = 0; j < 20; j++) {
+				table += '<td class=\'cell not-visited cell_' + i + '_' + j + '\' x=\'' + i + '\' y=\'' + j + '\'></td>'
+			}
+			table += '</tr>'
+		}
+		table += '</table>'
+
+		$('.mine-field').html(table)
+
+		$('.not-visited').click(function() {
+			if (boardId == -1) { //board not initialized
+				return;
+			}
+			if (done) { //already solved
+				return
+			}
+			$.post('//localhost:7778/boardId/' + boardId + '/x/' + $(this).attr("x") + '/y/' + $(this).attr("y"), function (data) {
+				if (!data.blown) {
+					$.get('//localhost:7778/boardId/' + boardId, function (data){
+						var left = 0
+						for (var i = 0; i < 20; i ++) {
+							for (var j = 0; j < 20; j ++) {
+								if (data.board[i][j].visited) {
+									$('.cell_' + i.toString() + '_' + j.toString()).removeClass('not-visited')
+									$('.cell_' + i.toString() + '_' + j.toString()).addClass('visited')
+								}
+								if (data.board[i][j].surroundingMines) {
+									$('.cell_' + i.toString() + '_' + j.toString()).html(data.board[i][j].surroundingMines)
+								}
+								if (!data.board[i][j].visited) {
+									left ++
+								}
+								$('.info-visited').html(left)
+							}
+						}
+					})
+					if (data.finished) {
+						$('.info').html('Whooo hooo! Solved!')
+						jQuery.ajax({
+							url: '//localhost:7778/boardId/' + boardId,
+							type: 'DELETE'
+						})
+						done = true
+					}
+				}
+				else {
+					$('.info').html('WHOOPS!!! RIP!!!')
+					done = true
+				}
+			})
+		});
+	});
+</script>

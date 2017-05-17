@@ -1,0 +1,17 @@
+{
+  "name": "minesweeper-node-server",
+  "version": "0.0.1",
+  "description": "Watch your steps... watch 'em...",
+  "main": "server.js",
+  "author": "Dan Fratean",
+  "url": "https://github.com/dan-fratean/minesweeper-node-server",
+  "email": "bugs@nodefun.com",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies" : {
+    "express": "*",
+    "shortid": "*"
+  }
+}
