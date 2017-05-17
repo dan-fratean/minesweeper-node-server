@@ -17,22 +17,10 @@ var port = 7778
 
 //middleware for access control origin for testing purposes
 app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:7779');
-
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
+	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:7779');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+	res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+	next();
 });
 
 //create a new board with default dimensions and mine count
@@ -48,14 +36,14 @@ app.post('/new', function (req, res) {
 
 	var boardId = shortid.generate()
 	boards[boardId] = newBoard()
-    res.status(201).send({
-    	boardId: boardId,
-    	x: boards[boardId].board.length,
-    	y: boards[boardId].board[0].length,
-    	mines: boards[boardId].mines
-    })
-    collector.push([boardId, Math.round(new Date().getTime()/1000)])
-    console.log('New standard board created. I have named it \'' + boardId + '\'. Pretty name, isn\'t it?')
+	res.status(201).send({
+		boardId: boardId,
+		x: boards[boardId].board.length,
+		y: boards[boardId].board[0].length,
+		mines: boards[boardId].mines
+	})
+	collector.push([boardId, Math.round(new Date().getTime()/1000)])
+	console.log('New standard board created. I have named it \'' + boardId + '\'. Pretty name, isn\'t it?')
 })
 
 app.post('/boardId/:boardId/x/:x/y/:y', function (req, res) {
@@ -229,32 +217,32 @@ function inspect(board, x, y) {
 	var surroundingMines = 0
 	var neighbours = []
 	for (var i = x - 1; i <= x + 1; i++) {
-    	for (var j = y - 1; j <= y + 1; j++) {
-      		if (i < 0 || i >= board.board.length || j < 0 || j >= board.board[i].length) {
-      			continue
-      		}
+		for (var j = y - 1; j <= y + 1; j++) {
+			if (i < 0 || i >= board.board.length || j < 0 || j >= board.board[i].length) {
+				continue
+	  		}
 
-      		neighbour = board.board[i][j]
-      		if (neighbour.mine) {
-      			surroundingMines++
-      		}
-      		else if (!neighbour.visited) {
-      			neighbours.push({
-      				x: i,
-      				y: j
-      			})
-      		}
-      	}
-    }
+	  		neighbour = board.board[i][j]
+	  		if (neighbour.mine) {
+	  			surroundingMines++
+	  		}
+	  		else if (!neighbour.visited) {
+	  			neighbours.push({
+	  				x: i,
+	  				y: j
+	  			})
+	  		}
+	  	}
+	}
 
-    board.board[x][y].surroundingMines = surroundingMines
+	board.board[x][y].surroundingMines = surroundingMines
 
-    if (!surroundingMines) {
-    	neighbours.forEach(function(neighbour) {
-    		board = inspect(board, neighbour.x, neighbour.y)
-    	})
-    }
-    return board
+	if (!surroundingMines) {
+		neighbours.forEach(function(neighbour) {
+			board = inspect(board, neighbour.x, neighbour.y)
+		})
+	}
+	return board
 }
 
 function removeBoard(boardId) {
