@@ -38,7 +38,6 @@
 
 		$.post('//localhost:7778/new', function(data) {
 			boardId = data.boardId
-			console.log('New board: ' + boardId)
 		})
 
 		var table = '<table>'
@@ -91,6 +90,10 @@
 				}
 				else {
 					$('.info').html('WHOOPS!!! RIP!!!')
+					jQuery.ajax({
+						url: '//localhost:7778/boardId/' + boardId,
+						type: 'DELETE'
+					})
 					done = true
 				}
 			})

@@ -1,0 +1,13 @@
+{
+	"port": 7778,
+	"boards": {
+		"expireDelta": 86400,
+		"idleDelta": 3600,
+		"maxBoards": 10
+	},
+	"board": {
+		"defaultX": 20,
+		"defaultY": 20,
+		"maxMines": 40
+	}
+}
