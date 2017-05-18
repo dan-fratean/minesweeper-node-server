@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 class Board {
 	constructor (x, y, mines) {
@@ -165,4 +165,4 @@ class Board {
 	}
 }
 
-module.exports = Board;
+module.exports = Board
